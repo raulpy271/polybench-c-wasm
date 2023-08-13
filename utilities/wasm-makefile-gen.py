@@ -20,6 +20,10 @@ EMCC=emcc
 CHEERP_FLAGS=-cheerp-pretty-code -target cheerp-wasm
 POLYBENCH_FLAGS=-DMEDIUM_DATASET -DPOLYBENCH_TIME -DPOLYBENCH_NO_FLUSH_CACHE
 
+.PHONY: all clean
+
+all: {filename}_cheerp.js {filename}_ems.js
+
 {filename}_cheerp.wasm {filename}_cheerp.js: {filename}.c {filename}.h
 	$(CHEERP) $(CHEERP_FLAGS) $(POLYBENCH_FLAGS) \\
 		-I {utilities} -I . \\
