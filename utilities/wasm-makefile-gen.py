@@ -17,8 +17,9 @@ categories = (
 makefile_text = """
 CHEERP=/opt/cheerp/bin/clang
 EMCC=emcc
-CHEERP_FLAGS=-cheerp-pretty-code -target cheerp-wasm
-POLYBENCH_FLAGS=-DMEDIUM_DATASET -DPOLYBENCH_TIME -DPOLYBENCH_NO_FLUSH_CACHE
+CHEERP_FLAGS=-O2 -cheerp-pretty-code -target cheerp-wasm -cheerp-linear-heap-size=524
+EMCC_FLAGS=-O2 --minify 0 -sINITIAL_MEMORY=1114112 -sALLOW_MEMORY_GROWTH -sMAXIMUM_MEMORY=$$((500 * 1024 * 1024))
+POLYBENCH_FLAGS=-DPOLYBENCH_TIME
 
 .PHONY: all clean
 
@@ -30,9 +31,11 @@ all: {filename}_cheerp.js {filename}_ems.js
         {utilities}/polybench.c {filename}.c \\
 		-o {filename}_cheerp.js
 	cat {utilities}/cheerp_print_mem.js >> {filename}_cheerp.js
+	# Store initial size of the heap
+	sed -E -i '/function\s+__start\s*\(/a initial_memory = __heap.byteLength;' {filename}_cheerp.js
 
 {filename}_ems.wasm {filename}_ems.js: {filename}.c {filename}.h
-	$(EMCC) $(POLYBENCH_FLAGS) \\
+	$(EMCC) $(EMCC_FLAGS) $(POLYBENCH_FLAGS) \\
 		-I {utilities} -I . \\
         {utilities}/polybench.c {filename}.c \\
 		--post-js {utilities}/emcc_print_mem.js \\
