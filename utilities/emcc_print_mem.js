@@ -17,8 +17,8 @@ __ATMAIN__.push((module) => {
 
 __ATPOSTRUN__.push((module) => {
     memory_used = module.asm.memory.buffer.byteLength;
-    console.log(polybench_time);
-    console.log(initial_memory);
-    console.log(memory_used);
+    Module['polybench_time'] = polybench_time;
+    Module['initial_memory'] = initial_memory;
+    Module['memory_used'] = memory_used;
 })
 

@@ -11,11 +11,3 @@ function capture_time(time) {
 
 console.log = capture_time;
 
-__dummy.promise.then(() => {
-    memory_used = __heap.byteLength;
-    console.log(polybench_time);
-    console.log(initial_memory);
-    console.log(memory_used);
-});
-
-
