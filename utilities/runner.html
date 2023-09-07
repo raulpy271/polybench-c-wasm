@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WebAssembly Benchmark!</title>
+        <script>
+            function downloadResultInCSV(data) {
+                let csv = "algorithm,compiler,polybench_time,initial_memory,memory_used\n";
+                for (let row of data) {
+                    csv += `$ALGORITHM,$COMPILER,${row["polybench_time"]},${row["initial_memory"]},${row["memory_used"]}\n`;
+                }
+                const download = document.getElementById("download");
+                download.href = "data:text/plain;base64," + btoa(csv);
+                download.download = "benchmark_$ALGORITHM_$COMPILER.csv";
+                download.click();
+            }
+
+            async function run() {
+                const WARM_UP_QUANTITY = 2;
+                const EXECUTION_QUANTITY = 5;
+                const data = [];
+                const status = document.getElementById("status");
+                status.innerHTML = "Running warm up...";
+                for (let i = 0; i < WARM_UP_QUANTITY; i++) {
+                    const mod = await import(`./$ALGORITHM_$COMPILER.mjs?foo=${Math.random()}`);
+                    await mod.default();
+                }
+                for (let i = 0; i < EXECUTION_QUANTITY; i++) {
+                    status.innerHTML = `Running ${i + 1} execution...`;
+                    const mod = await import(`./$ALGORITHM_$COMPILER.mjs?foo=${Math.random()}`);
+                    const result = await mod.default();
+                    data.push(result);
+                }
+                status.innerHTML = "Benchmark runned."
+                downloadResultInCSV(data);
+            }
+        </script>
+    </head>
+    <body onload="setTimeout(() => run(), 2000)">
+        <h1>Benchmark Runner!</h1>
+        <p>
+            Algorithm: <b>$ALGORITHM</b><br>
+            Compiler: <b>$COMPILER</b>
+        </p>
+        <p id="status">Loading page...</p>
+        <a id="download" style="display: none" onclick="setTimeout(() => window.close(), 2000);">Download.</a>
+    </body>
+</html>
+

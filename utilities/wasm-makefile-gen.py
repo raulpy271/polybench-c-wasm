@@ -23,7 +23,7 @@ POLYBENCH_FLAGS=-DPOLYBENCH_TIME
 
 .PHONY: all clean
 
-all: {filename}_cheerp.mjs {filename}_ems.mjs
+all: {filename}_cheerp.mjs {filename}_cheerp.html {filename}_emscripten.mjs {filename}_emscripten.html
 
 {filename}_cheerp.wasm {filename}_cheerp.mjs: {filename}.c {filename}.h
 	$(CHEERP) $(CHEERP_FLAGS) $(POLYBENCH_FLAGS) \\
@@ -38,15 +38,21 @@ all: {filename}_cheerp.mjs {filename}_ems.mjs
         '/^\s*__start\s*\(\s*\)/a memory_used = __heap.byteLength; return {{polybench_time, initial_memory, memory_used}};' \\
         {filename}_cheerp.mjs
 
-{filename}_ems.wasm {filename}_ems.mjs: {filename}.c {filename}.h
+{filename}_emscripten.wasm {filename}_emscripten.mjs: {filename}.c {filename}.h
 	$(EMCC) $(EMCC_FLAGS) $(POLYBENCH_FLAGS) \\
 		-I {utilities} -I . \\
         {utilities}/polybench.c {filename}.c \\
 		--post-js {utilities}/emcc_print_mem.js \\
-		-o {filename}_ems.mjs
+		-o {filename}_emscripten.mjs
+
+{filename}_cheerp.html: {utilities}/runner.html
+	sed 's/$$ALGORITHM/{filename}/;s/$$COMPILER/cheerp/' {utilities}/runner.html > {filename}_cheerp.html
+
+{filename}_emscripten.html: {utilities}/runner.html
+	sed 's/$$ALGORITHM/{filename}/;s/$$COMPILER/emscripten/' {utilities}/runner.html > {filename}_emscripten.html
 
 clean:
-	@ rm -f {filename}*.mjs {filename}*.wasm
+	@ rm -f {filename}*.mjs {filename}*.wasm {filename}*.html
 
 """
 
