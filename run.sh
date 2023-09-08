@@ -26,8 +26,10 @@ run_each_algorithm () {
             make -s
             echo "Running benchmark"
             python -m http.server &
-            firefox --private-window http://localhost:8000/${algorithm}_cheerp.html
-            firefox --private-window http://localhost:8000/${algorithm}_emscripten.html
+            firefox --private-window http://localhost:8000/${algorithm}_cheerp.html &> /dev/null
+            firefox --private-window http://localhost:8000/${algorithm}_emscripten.html &> /dev/null
+            google-chrome-stable --incognito http://localhost:8000/${algorithm}_cheerp.html &> /dev/null
+            google-chrome-stable --incognito http://localhost:8000/${algorithm}_emscripten.html &> /dev/null
             echo "Benchmark runned."
             kill `pidof python`
             cd $curr_pwd

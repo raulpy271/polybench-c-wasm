@@ -1,17 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
+        <meta charset="UTF-8">
         <title>WebAssembly Benchmark!</title>
         <script>
+            function getBrowser() {
+                let browsers = ["firefox", "chrome"];
+                let agent = window.navigator.userAgent.toLowerCase();
+                let match = browsers.filter(browser => agent.includes(browser));
+                if (match) {
+                    return match[0];
+                } else {
+                    throw "Não foi possível detectar o browser utilizado!";
+                }
+            }
+
             function downloadResultInCSV(data, size) {
+                const browser = getBrowser();
                 let csv = "algorithm,compiler,bin_size,browser,polybench_time,initial_memory,memory_used\n";
                 for (let row of data) {
-                    csv += `$ALGORITHM,$COMPILER,${size},${window.navigator.appCodeName},`;
+                    csv += `$ALGORITHM,$COMPILER,${size},${browser},`;
                     csv += `${row["polybench_time"]},${row["initial_memory"]},${row["memory_used"]}\n`;
                 }
                 const download = document.getElementById("download");
                 download.href = "data:text/plain;base64," + btoa(csv);
-                download.download = "benchmark_$ALGORITHM_$COMPILER.csv";
+                download.download = `benchmark_$ALGORITHM_$COMPILER_${browser}.csv`;
                 download.click();
             }
 
