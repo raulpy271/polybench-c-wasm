@@ -3,10 +3,11 @@
     <head>
         <title>WebAssembly Benchmark!</title>
         <script>
-            function downloadResultInCSV(data) {
-                let csv = "algorithm,compiler,polybench_time,initial_memory,memory_used\n";
+            function downloadResultInCSV(data, size) {
+                let csv = "algorithm,compiler,bin_size,browser,polybench_time,initial_memory,memory_used\n";
                 for (let row of data) {
-                    csv += `$ALGORITHM,$COMPILER,${row["polybench_time"]},${row["initial_memory"]},${row["memory_used"]}\n`;
+                    csv += `$ALGORITHM,$COMPILER,${size},${window.navigator.appCodeName},`;
+                    csv += `${row["polybench_time"]},${row["initial_memory"]},${row["memory_used"]}\n`;
                 }
                 const download = document.getElementById("download");
                 download.href = "data:text/plain;base64," + btoa(csv);
@@ -14,11 +15,17 @@
                 download.click();
             }
 
+            async function getFileSize(url) {
+                const resp = await fetch(url, {method: "HEAD"});
+                return resp.headers.get("Content-Length");
+            }
+
             async function run() {
                 const WARM_UP_QUANTITY = 2;
                 const EXECUTION_QUANTITY = 5;
                 const data = [];
                 const status = document.getElementById("status");
+                const size = await getFileSize("./$ALGORITHM_$COMPILER.wasm");
                 status.innerHTML = "Running warm up...";
                 for (let i = 0; i < WARM_UP_QUANTITY; i++) {
                     const mod = await import(`./$ALGORITHM_$COMPILER.mjs?foo=${Math.random()}`);
@@ -31,11 +38,18 @@
                     data.push(result);
                 }
                 status.innerHTML = "Benchmark runned."
-                downloadResultInCSV(data);
+                downloadResultInCSV(data, size);
+            }
+
+            function tryRun() {
+                run().catch(e => {
+                    const status = document.getElementById("status");
+                    status.innerHTML = String(e);
+                });
             }
         </script>
     </head>
-    <body onload="setTimeout(() => run(), 2000)">
+    <body onload="setTimeout(() => tryRun(), 2000)">
         <h1>Benchmark Runner!</h1>
         <p>
             Algorithm: <b>$ALGORITHM</b><br>
