@@ -30,7 +30,7 @@ all: {filename}_cheerp.mjs {filename}_cheerp.html {filename}_emscripten.mjs {fil
 		-I {utilities} -I . \\
         {utilities}/polybench.c {filename}.c \\
 		-o {filename}_cheerp.mjs
-	cat {utilities}/cheerp_print_mem.js >> {filename}_cheerp.mjs
+	cat {utilities}/cheerp_capture_time.js >> {filename}_cheerp.mjs
 	# Store initial size of the heap
 	sed -E -i '/function\s+__start\s*\(/a initial_memory = __heap.byteLength;' {filename}_cheerp.mjs
 	# Store final size of the heap and return result
@@ -42,14 +42,14 @@ all: {filename}_cheerp.mjs {filename}_cheerp.html {filename}_emscripten.mjs {fil
 	$(EMCC) $(EMCC_FLAGS) $(POLYBENCH_FLAGS) \\
 		-I {utilities} -I . \\
         {utilities}/polybench.c {filename}.c \\
-		--post-js {utilities}/emcc_print_mem.js \\
+		--post-js {utilities}/emscripten_capture_time.js \\
 		-o {filename}_emscripten.mjs
 
-{filename}_cheerp.html: {utilities}/runner.html
-	sed 's/$$ALGORITHM/{filename}/;s/$$COMPILER/cheerp/' {utilities}/runner.html > {filename}_cheerp.html
+{filename}_cheerp.html: {utilities}/runner.template.html
+	sed 's/$$ALGORITHM/{filename}/;s/$$COMPILER/cheerp/' {utilities}/runner.template.html > {filename}_cheerp.html
 
-{filename}_emscripten.html: {utilities}/runner.html
-	sed 's/$$ALGORITHM/{filename}/;s/$$COMPILER/emscripten/' {utilities}/runner.html > {filename}_emscripten.html
+{filename}_emscripten.html: {utilities}/runner.template.html
+	sed 's/$$ALGORITHM/{filename}/;s/$$COMPILER/emscripten/' {utilities}/runner.template.html > {filename}_emscripten.html
 
 clean:
 	@ rm -f {filename}*.mjs {filename}*.wasm {filename}*.html
@@ -57,9 +57,8 @@ clean:
 """
 
 def create_makefiles():
-    utilities_path = os.getcwd()
-    for category in categories:
-        category_path = '../' + category
+    utilities_path = os.getcwd() + "/utilities"
+    for category_path in categories:
         for algorithm in os.listdir(category_path):
             makefile_path = category_path + '/' + algorithm + '/Makefile'
             print('creating file', makefile_path)

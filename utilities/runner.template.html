@@ -1,17 +1,18 @@
 <!DOCTYPE html>
+<!-- This is a HTML template because the occurrences of $ALGORITHM and $COMPILER will be replaced. -->
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <title>WebAssembly Benchmark!</title>
         <script>
             function getBrowser() {
-                let browsers = ["firefox", "chrome"];
-                let agent = window.navigator.userAgent.toLowerCase();
-                let match = browsers.filter(browser => agent.includes(browser));
+                const browsers = ["firefox", "chrome"];
+                const agent = window.navigator.userAgent.toLowerCase();
+                const match = browsers.filter(browser => agent.includes(browser));
                 if (match) {
                     return match[0];
                 } else {
-                    throw "Não foi possível detectar o browser utilizado!";
+                    throw "Can't detect the current browser name!";
                 }
             }
 
