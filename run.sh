@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DOWNLOAD_DIR="/home/raul/Downloads"
+DOWNLOAD_DIR="$HOME/Downloads"
 FULL_BENCHMARK="$DOWNLOAD_DIR/benchmark_full.csv"
 
 CATEGORIES=(
@@ -25,13 +25,13 @@ run_each_algorithm () {
             make -s clean
             make -s
             echo "Running benchmark"
-            python -m http.server &
+            python3 -m http.server &> /dev/null &
             firefox --private-window http://localhost:8000/${algorithm}_cheerp.html &> /dev/null
             firefox --private-window http://localhost:8000/${algorithm}_emscripten.html &> /dev/null
             google-chrome-stable --incognito http://localhost:8000/${algorithm}_cheerp.html &> /dev/null
             google-chrome-stable --incognito http://localhost:8000/${algorithm}_emscripten.html &> /dev/null
             echo "Benchmark runned."
-            kill `pidof python`
+            kill `pidof -s python3`
             cd $curr_pwd
         done
     done

@@ -35,8 +35,8 @@
             }
 
             async function run() {
-                const WARM_UP_QUANTITY = 2;
-                const EXECUTION_QUANTITY = 5;
+                const WARM_UP_QUANTITY = 5;
+                const EXECUTION_QUANTITY = 30;
                 const data = [];
                 const status = document.getElementById("status");
                 const size = await getFileSize("./$ALGORITHM_$COMPILER.wasm");
