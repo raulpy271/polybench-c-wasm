@@ -17,9 +17,10 @@ categories = (
 makefile_text = """
 CHEERP=/opt/cheerp/bin/clang
 EMCC=emcc
+DATASET_SIZE=LARGE_DATASET
 CHEERP_FLAGS=-O2 -cheerp-pretty-code -target cheerp-wasm -cheerp-linear-heap-size=524 -cheerp-make-module=es6
 EMCC_FLAGS=-O2 --minify 0 -sINITIAL_MEMORY=1114112 -sALLOW_MEMORY_GROWTH -sMAXIMUM_MEMORY=$$((500 * 1024 * 1024))
-POLYBENCH_FLAGS=-DPOLYBENCH_TIME
+POLYBENCH_FLAGS=-DPOLYBENCH_TIME -D$(DATASET_SIZE)
 
 .PHONY: all clean
 
@@ -46,10 +47,10 @@ all: {filename}_cheerp.mjs {filename}_cheerp.html {filename}_emscripten.mjs {fil
 		-o {filename}_emscripten.mjs
 
 {filename}_cheerp.html: {utilities}/runner.template.html
-	sed 's/$$ALGORITHM/{filename}/;s/$$COMPILER/cheerp/' {utilities}/runner.template.html > {filename}_cheerp.html
+	sed 's/$$ALGORITHM/{filename}/;s/$$COMPILER/cheerp/;s/$$DATASET_SIZE/$(DATASET_SIZE)/' {utilities}/runner.template.html > {filename}_cheerp.html
 
 {filename}_emscripten.html: {utilities}/runner.template.html
-	sed 's/$$ALGORITHM/{filename}/;s/$$COMPILER/emscripten/' {utilities}/runner.template.html > {filename}_emscripten.html
+	sed 's/$$ALGORITHM/{filename}/;s/$$COMPILER/emscripten/;s/$$DATASET_SIZE/$(DATASET_SIZE)/' {utilities}/runner.template.html > {filename}_emscripten.html
 
 clean:
 	@ rm -f {filename}*.mjs {filename}*.wasm {filename}*.html
