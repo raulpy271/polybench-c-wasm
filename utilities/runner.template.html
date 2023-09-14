@@ -25,7 +25,7 @@
                 }
                 const download = document.getElementById("download");
                 download.href = "data:text/plain;base64," + btoa(csv);
-                download.download = `benchmark_$ALGORITHM_$COMPILER_${browser}.csv`;
+                download.download = `benchmark_$ALGORITHM_$COMPILER_$DATASET_SIZE_${browser}.csv`.toLowerCase();
                 download.click();
             }
 
