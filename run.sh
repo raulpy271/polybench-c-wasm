@@ -1,5 +1,7 @@
 #!/bin/bash
 
+FIREFOX=firefox
+CHROME=google-chrome-stable
 DOWNLOAD_DIR="$HOME/Downloads"
 FULL_BENCHMARK="$DOWNLOAD_DIR/benchmark_full.csv"
 
@@ -26,10 +28,10 @@ run_each_algorithm () {
             make -s
             echo "Running benchmark"
             python3 -m http.server &> /dev/null &
-            firefox --private-window http://localhost:8000/${algorithm}_cheerp.html &> /dev/null
-            firefox --private-window http://localhost:8000/${algorithm}_emscripten.html &> /dev/null
-            google-chrome-stable --incognito http://localhost:8000/${algorithm}_cheerp.html &> /dev/null
-            google-chrome-stable --incognito http://localhost:8000/${algorithm}_emscripten.html &> /dev/null
+            $FIREFOX --private-window http://localhost:8000/${algorithm}_cheerp.html &> /dev/null
+            $FIREFOX --private-window http://localhost:8000/${algorithm}_emscripten.html &> /dev/null
+            $CHROME --incognito http://localhost:8000/${algorithm}_cheerp.html &> /dev/null
+            $CHROME --incognito http://localhost:8000/${algorithm}_emscripten.html &> /dev/null
             echo "Benchmark runned."
             kill `pidof -s python3`
             cd $curr_pwd
