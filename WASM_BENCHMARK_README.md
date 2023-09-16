@@ -2,39 +2,36 @@
 
 # Execução do benchmark
 
+### Python 3.8
+
 ### Instalar browsers: firefox e chrome
 
 Após instalar ambos os browsers, ativar as flags:
  - Firefox: Acessar `about:config` e ativar `dom.allow_scripts_to_close_windows`
- - Chrome: Acessar `chrome://flags/` e ativar "Download Bubble"
+ - Chrome: Acessar `chrome://flags/` e desativar "Download Bubble"
 
-### Instalar cheerp
+### Instalar cheerp 3.0
 
 ```bash
-# Adding the repository
 sudo add-apt-repository ppa:leaningtech-dev/cheerp-ppa
 sudo apt-get update
 
-# To install all cheerp components, run
-apt-get install cheerp-core
+sudo apt-get install cheerp-core=3.0-1~focal
 ```
 
-### Instalar emscripten
+### Instalar emscripten v3.1.36
 
 Instalação via compilação de código fonte:
 
 ```
-# Get the emsdk repo
 git clone https://github.com/emscripten-core/emsdk.git
 git pull
 
-# Download and install the latest SDK tools.
-./emsdk install latest
+./emsdk install 3.1.36
 
-# Make the "latest" SDK "active" for the current user. (writes .emscripten file)
-./emsdk activate latest
+./emsdk activate 3.1.36
 
-# Activate PATH and other environment variables in the current terminal
+# Adiciona executável do emsdk em $PATH
 source ./emsdk_env.sh
 ```
 
