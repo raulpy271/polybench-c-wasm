@@ -17,9 +17,9 @@ categories = (
 makefile_text = """
 CHEERP=/opt/cheerp/bin/clang
 EMCC=emcc
-DATASET_SIZE=LARGE_DATASET
-CHEERP_FLAGS=-O2 -cheerp-pretty-code -target cheerp-wasm -cheerp-linear-heap-size=524 -cheerp-make-module=es6
-EMCC_FLAGS=-O2 --minify 0 -sINITIAL_MEMORY=1114112 -sALLOW_MEMORY_GROWTH -sMAXIMUM_MEMORY=$$((500 * 1024 * 1024))
+DATASET_SIZE=EXTRALARGE_DATASET
+CHEERP_FLAGS=-O2 -cheerp-pretty-code -target cheerp-wasm -cheerp-linear-heap-size=2000 -cheerp-make-module=es6
+EMCC_FLAGS=-O2 --minify 0 -sINITIAL_MEMORY=1114112 -sALLOW_MEMORY_GROWTH -sMAXIMUM_MEMORY=$$((2000 * 1024 * 1024))
 POLYBENCH_FLAGS=-DPOLYBENCH_TIME -D$(DATASET_SIZE)
 
 .PHONY: all clean

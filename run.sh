@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FIREFOX=firefox
+FIREFOX=/home/professor/Downloads/firefox/firefox
 CHROME=google-chrome-stable
 DOWNLOAD_DIR="$HOME/Downloads"
 FULL_BENCHMARK="$DOWNLOAD_DIR/benchmark_full.csv"
