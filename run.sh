@@ -29,8 +29,11 @@ run_each_algorithm () {
             echo "Running benchmark"
             python3 -m http.server &> /dev/null &
             $FIREFOX --private-window http://localhost:8000/${algorithm}_cheerp.html &> /dev/null
+            sleep 2
             $FIREFOX --private-window http://localhost:8000/${algorithm}_emscripten.html &> /dev/null
+            sleep 2
             $CHROME --incognito http://localhost:8000/${algorithm}_cheerp.html &> /dev/null
+            sleep 2
             $CHROME --incognito http://localhost:8000/${algorithm}_emscripten.html &> /dev/null
             echo "Benchmark runned."
             kill `pidof -s python3`
@@ -52,3 +55,9 @@ echo "Crating full CSV"
 create_full_benchmark_result
 echo $FULL_BENCHMARK " created!"
 
+
+echo "Will poweroff in 60 seconds!"
+
+sleep 60
+
+poweroff
