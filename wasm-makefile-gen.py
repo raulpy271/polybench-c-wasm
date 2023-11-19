@@ -17,9 +17,11 @@ categories = (
 makefile_text = """
 CHEERP=/opt/cheerp/bin/clang
 EMCC=emcc
-DATASET_SIZE=EXTRALARGE_DATASET
-CHEERP_FLAGS=-O2 -cheerp-pretty-code -target cheerp-wasm -cheerp-linear-heap-size=2000 -cheerp-make-module=es6
-EMCC_FLAGS=-O2 --minify 0 -sINITIAL_MEMORY=1114112 -sALLOW_MEMORY_GROWTH -sMAXIMUM_MEMORY=$$((2000 * 1024 * 1024))
+DATASET_SIZE=MEDIUM_DATASET
+CHEERP_FLAGS=-O2 -cheerp-pretty-code -target cheerp-wasm \\
+	-cheerp-linear-heap-size=2000 -cheerp-make-module=es6
+EMCC_FLAGS=-O2 --minify 0 -sINITIAL_MEMORY=1114112 -sALLOW_MEMORY_GROWTH \\
+	-sMAXIMUM_MEMORY=$$((2000 * 1024 * 1024))
 POLYBENCH_FLAGS=-DPOLYBENCH_TIME -D$(DATASET_SIZE)
 
 .PHONY: all clean
@@ -36,21 +38,24 @@ all: {filename}_cheerp.mjs {filename}_cheerp.html {filename}_emscripten.mjs {fil
 	sed -E -i '/function\s+__start\s*\(/a initial_memory = __heap.byteLength;' {filename}_cheerp.mjs
 	# Store final size of the heap and return result
 	sed -E -i \\
-        '/^\s*__start\s*\(\s*\)/a memory_used = __heap.byteLength; return {{polybench_time, initial_memory, memory_used}};' \\
-        {filename}_cheerp.mjs
+		'/^\s*__start\s*\(\s*\)/a memory_used = __heap.byteLength; \\
+		return {{polybench_time, initial_memory, memory_used}};' \\
+		{filename}_cheerp.mjs
 
 {filename}_emscripten.wasm {filename}_emscripten.mjs: {filename}.c {filename}.h
 	$(EMCC) $(EMCC_FLAGS) $(POLYBENCH_FLAGS) \\
 		-I {utilities} -I . \\
-        {utilities}/polybench.c {filename}.c \\
+		{utilities}/polybench.c {filename}.c \\
 		--post-js {utilities}/emscripten_capture_time.js \\
 		-o {filename}_emscripten.mjs
 
 {filename}_cheerp.html: {utilities}/runner.template.html
-	sed 's/$$ALGORITHM/{filename}/;s/$$COMPILER/cheerp/;s/$$DATASET_SIZE/$(DATASET_SIZE)/' {utilities}/runner.template.html > {filename}_cheerp.html
+	sed 's/$$ALGORITHM/{filename}/;s/$$COMPILER/cheerp/;s/$$DATASET_SIZE/$(DATASET_SIZE)/' \\
+		{utilities}/runner.template.html > {filename}_cheerp.html
 
 {filename}_emscripten.html: {utilities}/runner.template.html
-	sed 's/$$ALGORITHM/{filename}/;s/$$COMPILER/emscripten/;s/$$DATASET_SIZE/$(DATASET_SIZE)/' {utilities}/runner.template.html > {filename}_emscripten.html
+	sed 's/$$ALGORITHM/{filename}/;s/$$COMPILER/emscripten/;s/$$DATASET_SIZE/$(DATASET_SIZE)/' \\
+		{utilities}/runner.template.html > {filename}_emscripten.html
 
 clean:
 	@ rm -f {filename}*.mjs {filename}*.wasm {filename}*.html
